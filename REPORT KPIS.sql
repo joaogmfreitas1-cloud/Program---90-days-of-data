@@ -1,0 +1,102 @@
+-- AdventureWorks2017
+-- localhost\SQLEXPRESS
+
+
+-- Primeiro KPI - FATURAMENTO
+
+SELECT* FROM sales.SalesOrderDetail
+SELECT SUM(LineTotal) FROM SALES.SalesOrderDetail
+
+SELECT 
+    MAX(MONTH(ModifiedDate)) AS 'Ultimo Mes de 2014'
+FROM sales.SalesOrderDetail
+WHERE YEAR(ModifiedDate) = 2014;
+
+
+SELECT	
+year(ModifiedDate) as ANO,
+Count(*) as 'Vendas por ANO',
+SUM(LineTotal) as 'Valor Total'
+FROM sales.SalesOrderDetail
+group by year(ModifiedDate)
+order by ano
+
+
+-- Segundo KPI - Quantidade de Pedidos
+
+SELECT* FROM sales.SalesOrderDetail
+
+SELECT	
+year(ModifiedDate) as ANO,
+Count(SalesOrderID) as 'Pedidos por ANO'
+FROM sales.SalesOrderDetail
+group by year(ModifiedDate)
+order by ano
+
+-- Terceiro KPI - Ticket Médio
+
+SELECT	
+year(ModifiedDate) as ANO,
+SUM(LineTotal) as 'Valor Total',
+Count(SalesOrderID) as 'Pedidos por ANO',
+SUM(LineTotal)/Count(SalesOrderID) as 'Ticket Médio'
+FROM sales.SalesOrderDetail
+group by year(ModifiedDate)
+order by ano
+
+
+-- Quarto KPI - Pedios por região
+SELECT* FROM sales.SalesOrderDetail
+SELECT* FROM sales.SalesOrderHeader
+SELECT* FROM Sales.Customer 
+SELECT* FROM Person.Address
+SELECT* FROM Person.StateProvince 
+
+
+SELECT 
+SP.Name as Estado,
+count(SO.SalesOrderID) as total_pedidos
+From Sales.SalesOrderHeader SO
+JOIN SALES.CUSTOMER C 
+ON SO.CUSTOMERID = C. CUSTOMERID 
+JOIN PERSON.ADDRESS PA 
+ON C.CUSTOMERID = PA.ADDRESSID
+JOIN PERSON.STATEPROVINCE SP
+ON PA.StateProvinceID = SP.StateProvinceID
+GROUP BY NAME
+ORDER BY total_pedidos desc
+
+
+-- Clientes ativos por mês ao longo dos anos
+
+SELECT* FROM sales.SalesOrderHeader
+
+
+SELECT
+    YEAR(OrderDate)  AS Ano,
+    MONTH(OrderDate) AS Mes,
+    COUNT(DISTINCT CustomerID) AS Clientes_Ativos
+FROM Sales.SalesOrderHeader
+GROUP BY
+    YEAR(OrderDate),
+    MONTH(OrderDate)
+ORDER BY
+    Ano,
+    Mes;
+
+
+--  Receita média por cliente ao longo dos anos 
+
+SELECT
+    YEAR(OrderDate)  AS Ano,
+    MONTH(OrderDate) AS Mes,
+    SUM(TotalDue) / COUNT(DISTINCT CustomerID) AS Receita_Por_Cliente
+FROM Sales.SalesOrderHeader
+GROUP BY
+    YEAR(OrderDate),
+    MONTH(OrderDate)
+ORDER BY
+    Ano,
+    Mes;
+
+
